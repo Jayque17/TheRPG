@@ -16,8 +16,8 @@ class Hero:
     Classe représentant le personnage.
     """
     def __init__(self):
-        self.sexe = askGender()
-        self.name = askName(self.sexe)
+        self.gender = askGender()
+        self.name = askName(self.gender)
         self.level = 1
         self.experience = 0
         self.life = 10
@@ -81,7 +81,7 @@ def grepAnswer():
 def askGender():
     """
     La fonction pose la question homme ou femme.
-    Elle renvoie le sexe du personage.
+    Elle renvoie le genre du personage.
     """
     while(1):
         print("Bonjour à toi aventurier, avant de commencer ton époppé présente toi.Est-tu un homme ou une femme? [H/F]")
@@ -125,13 +125,40 @@ def rollTheDice():
     """
     return randint(1, 101)
 
+def statOnDice(dice, stat, op):
+    """
+    Modifie la valeur d'un dé en fonction d'une statistique du perso.
+    renvoie la valeur de dé modifié.
+    dice: entier
+    stat: entier
+    op: + ou -
+    >>> statOnDice(56, 18, "+")
+    66
+    >>> statOnDice(95, 18, "-")
+    78
+    """
+    dice = float(dice)
+    impact = dice/100 * float(stat)
+    if op == "+":
+        dice += impact
+    if op == "-":
+        dice -= impact
+    return round(dice)
+
+
+
 def initiative(player, monster):
     """
     Renvoie True si le joueur réussi le jet d'initiave.
     False si c'est le monstre.
     """
+    #jet de dé sans les stats joueur/monstre.
     player_dice = rollTheDice()
+    print("Jet de", player.name,":", player_dice)
     monster_dice = rollTheDice()
+    
+    #ajout des stats joueur sur son lancé.
+    player_dice = statOnDice(player_dice, player.chance, "+")
     print("Jet de", player.name,":", player_dice)
     print("Jet de", monster.name,":", monster_dice, "\n")
     if monster_dice > player_dice:
@@ -148,6 +175,8 @@ def attack(turn, player, monster):
         print(player.name, "prépares ton attaque")
         attack_dice = rollTheDice()
         print(player.name, "tu as fait un", attack_dice)
+        attack_dice = statOnDice(attack_dice, player.precision, "-")
+        print(player.name, "tu as fait un", attack_dice)
         if attack_dice <= 50:
             print("lancé réussi")
             monster.life -= player.strengh
@@ -161,8 +190,12 @@ def attack(turn, player, monster):
         print(monster.name, "a fait un", attack_dice)
         if attack_dice <= 50:
             print("lancé réussi")
-            player.life -= monster.strengh
-            print("PV :", player.life, "\n")
+            if player.vitality < monster.strengh:
+                attack_monster = monster.strengh - player.vitality
+                player.life -= attack_monster
+                print("PV :", player.life, "\n")
+            else:
+                print(monster.name, "ne vous a fait aucun dégat.")  
         else:
             print("lancé échoué\n")
         return True
@@ -181,19 +214,21 @@ def fight(player, monster):
             return player.name
         
 def winFight(winner, player):
+    """
+    Affiche qui à gagner le combat.
+    """
     print(winner, "a gagné le combat")
     if winner == player.name:
         print("Bravo")
 
 def loseFight(winner, player):
     """
-    Renvoie True si le combat est perdu, False sinon.
+    Affiche si le personnage à perdu le combat
     winner : chaîne de caractère.
     """
     if winner != player.name:
         print("Bouhhh")
-        return True
-    return False
+        
 
     
     
@@ -202,17 +237,20 @@ def loseFight(winner, player):
 if __name__=="__main__":
 
     player = Hero()
+    
     stat_pt = introStat()
+    
     player.manageStat(stat_pt)
+    
     player.showStat()
 
     monster = Slime()
 
     winner = fight(player, monster)
 
-    win = winFight(winner, player)
+    winFight(winner, player)
 
-    lose = loseFight(winner, player)
+    loseFight(winner, player)
 
 
 

@@ -3,9 +3,13 @@
 from random import randint
 import time
 
-
+from language.fr import FrTexts
+from language.en import EnTexts
 
 #_____Classes_____
+
+def writeText(s):
+    print(s)
 
 class Slime:
     def __init__(self):
@@ -20,6 +24,7 @@ class Hero:
     def __init__(self):
         """Constructeur de la classe Hero"""
 
+        self.texts = askLanguage()
         self.name = askName()  #Nom
         self.level = 1  #Niveau
         self.experience = 0  #Expérience
@@ -41,7 +46,7 @@ class Hero:
 
         while tal_point > 0:  #La boucle finit quand il n'y a plus de points de statistique à attribuer
             
-            print("Tu as", tal_point,"points à placer")
+            print(self.texts.getPointsText(tal_point))
             answer = grepAnswer()  #Récupération du choix de l'utilisateur
             
             if answer == "for":  #Amélioration de la force

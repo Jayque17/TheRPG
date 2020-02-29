@@ -1,5 +1,5 @@
 from random import randint
-
+import time
 
 class Slime:
     """
@@ -7,7 +7,7 @@ class Slime:
     """
     def __init__(self):
         self.name = "Slime"
-        self.live = 5
+        self.life = 5
         self.strengh = 2
 
 
@@ -37,30 +37,30 @@ class Hero:
             answer = grepAnswer()
             if answer == "for":
                 self.strengh += 1
-                print("+1 en Force")
+                print("+1 en Force\n")
                 stat_pt -= 1
             if answer == "int":
                 self.intelligence += 1
-                print("+1 en Intelligence")
+                print("+1 en Intelligence\n")
                 stat_pt -= 1
             if answer == "cha":
                 self.chance += 1
-                print("+1 en Chance")
+                print("+1 en Chance\n")
                 stat_pt -= 1
             if answer == "vit":
                 self.vitality += 1
-                print("+1 en Vitalité")
+                print("+1 en Vitalité\n")
                 stat_pt -= 1
             if answer == "pre":
                 self.precision += 1
-                print("+1 en Précision")
+                print("+1 en Précision\n")
                 stat_pt -= 1
     
     def showStat(self):
         """
         La fonction montre les statistiques du personage.
         """
-        print("\nForce :", self.strengh)
+        print("Force :", self.strengh)
         print("Intelligence :", self.intelligence)
         print("Chance :", self.chance)
         print("Vitalité :", self.vitality)
@@ -68,7 +68,7 @@ class Hero:
         print("Vie :", "<3 "*self.life)
         print("Magie :", "@ "*self.mana)
         print("Niveau :", self.level)
-        print("Xp :", self.experience)
+        print("Xp :", self.experience, "\n")
             
 
 def grepAnswer():
@@ -84,7 +84,7 @@ def askGender():
     Elle renvoie le sexe du personage.
     """
     while(1):
-        print("Bonjour à toi aventurier, avant de commencer ton époppé présente toi.\nEst-tu un homme ou une femme? [H/F]")
+        print("Bonjour à toi aventurier, avant de commencer ton époppé présente toi.Est-tu un homme ou une femme? [H/F]")
         gender = grepAnswer()
         if gender == "F" or gender == "H":
             return gender
@@ -109,14 +109,14 @@ def introStat():
     La fonction présente les diffenrentes statistique du joueur.
     Elle renvoie 5.
     """
-    print("\nBon par défaut t'as 1 partout de vraies statistiques de gros noob.")
+    print("Bon par défaut t'as 1 partout de vraies statistiques de gros noob.")
     print("Je suis gentil je t'offre 5 points de talent, places les judicieusement.")
     print("Tes statistiques sont les suivantes :")
     print("Force (for), ça sert à casser des bouches plus fort.")
     print("Intelligence (int), pratique pour augmenter la puissance du barbeuc de mob.")
     print("Chance (cha), ça évite que le dé de la DESTINY OF DOOM APOCALYPTIQUE te bolosse de trop.")
     print("Vitalité (vit), plus t'en as moins t'as mal.")
-    print("Précision (pre), avec ça tu deviens le roi des sniper.")
+    print("Précision (pre), avec ça tu deviens le roi des sniper.\n")
     return 5
 
 def rollTheDice():
@@ -125,6 +125,78 @@ def rollTheDice():
     """
     return randint(1, 101)
 
+def initiative(player, monster):
+    """
+    Renvoie True si le joueur réussi le jet d'initiave.
+    False si c'est le monstre.
+    """
+    player_dice = rollTheDice()
+    monster_dice = rollTheDice()
+    print("Jet de", player.name,":", player_dice)
+    print("Jet de", monster.name,":", monster_dice, "\n")
+    if monster_dice > player_dice:
+        return False
+    return True
+
+def attack(turn, player, monster):
+    """
+    gère le tour d'attaque en fonction du monstre ou du joueur.
+    renvoie True si c'est le tour du monstre, False si c'est celui du joueur.
+    turn : booléen qui représente soit le tour du monstre soit celui du joueur.
+    """
+    if turn == True:
+        print(player.name, "prépares ton attaque")
+        attack_dice = rollTheDice()
+        print(player.name, "tu as fait un", attack_dice)
+        if attack_dice <= 50:
+            print("lancé réussi")
+            monster.life -= player.strengh
+            print("PV", monster.name, ":", monster.life, "\n")
+        else:
+            print("lancé échoué\n")
+        return False
+    elif turn == False:
+        print(monster.name, "prépare son attaque")
+        attack_dice = rollTheDice()
+        print(monster.name, "a fait un", attack_dice)
+        if attack_dice <= 50:
+            print("lancé réussi")
+            player.life -= monster.strengh
+            print("PV :", player.life, "\n")
+        else:
+            print("lancé échoué\n")
+        return True
+
+def fight(player, monster):
+    """
+    La fonction gère les combats entre le joueur et un monstre.
+    renvoie le vainqueur.
+    """
+    turn = initiative(player, monster)
+    while player.life > 0 or monster.life > 0 :
+        turn = attack(turn, player, monster)
+        if player.life <= 0:
+            return monster.name
+        elif monster.life <= 0:
+            return player.name
+        
+def winFight(winner, player):
+    print(winner, "a gagné le combat")
+    if winner == player.name:
+        print("Bravo")
+
+def loseFight(winner, player):
+    """
+    Renvoie True si le combat est perdu, False sinon.
+    winner : chaîne de caractère.
+    """
+    if winner != player.name:
+        print("Bouhhh")
+        return True
+    return False
+
+    
+    
 
 
 if __name__=="__main__":
@@ -133,6 +205,18 @@ if __name__=="__main__":
     stat_pt = introStat()
     player.manageStat(stat_pt)
     player.showStat()
+
+    monster = Slime()
+
+    winner = fight(player, monster)
+
+    win = winFight(winner, player)
+
+    lose = loseFight(winner, player)
+
+
+
+    
 
 
 

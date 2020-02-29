@@ -1,9 +1,20 @@
+from random import randint
 
 
+class Slime:
+    """
+    Classe qui représente un slime.
+    """
+    def __init__(self):
+        self.name = "Slime"
+        self.live = 5
+        self.strengh = 2
 
-class Personnage:
-    """Classe représentant le personnage"""
 
+class Hero:
+    """
+    Classe représentant le personnage.
+    """
     def __init__(self):
         self.sexe = askGender()
         self.name = askName(self.sexe)
@@ -13,12 +24,14 @@ class Personnage:
         self.mana = 5
         self.strengh = 1
         self.intelligence = 1
-        self.dexterity = 1
         self.chance = 1
         self.vitality = 1
         self.precision = 1
 
     def manageStat(self, stat_pt):
+        """
+        Fonction qui permet d'ameiliorer les statistiques de notre personnage.
+        """
         while stat_pt > 0:
             print("Tu as", stat_pt,"points à placer")
             answer = grepAnswer()
@@ -29,10 +42,6 @@ class Personnage:
             if answer == "int":
                 self.intelligence += 1
                 print("+1 en Intelligence")
-                stat_pt -= 1
-            if answer == "dex":
-                self.dexterity += 1
-                print("+1 en Dextérité")
                 stat_pt -= 1
             if answer == "cha":
                 self.chance += 1
@@ -53,7 +62,6 @@ class Personnage:
         """
         print("\nForce :", self.strengh)
         print("Intelligence :", self.intelligence)
-        print("Dextérité :", self.dexterity)
         print("Chance :", self.chance)
         print("Vitalité :", self.vitality)
         print("Précision :", self.precision)
@@ -87,7 +95,7 @@ def askName(gender):
     Elle renvoie le prenom du personage.
     gender : chaîne de caractère.
     """
-    
+
     if gender == "F":
         print("Si tu es prête à devenir une légende dit moi ton nom FEMME!")
         name = grepAnswer()
@@ -107,15 +115,21 @@ def introStat():
     print("Force (for), ça sert à casser des bouches plus fort.")
     print("Intelligence (int), pratique pour augmenter la puissance du barbeuc de mob.")
     print("Chance (cha), ça évite que le dé de la DESTINY OF DOOM APOCALYPTIQUE te bolosse de trop.")
-    print("Dextérité (dex), tu pensais pouvoir utiliser les armes comme tu veux? BAH NON!")
     print("Vitalité (vit), plus t'en as moins t'as mal.")
     print("Précision (pre), avec ça tu deviens le roi des sniper.")
     return 5
-    
+
+def rollTheDice():
+    """
+    Fait un lancer de dé 100.
+    """
+    return randint(1, 101)
+
+
 
 if __name__=="__main__":
 
-    player = Personnage()
+    player = Hero()
     stat_pt = introStat()
     player.manageStat(stat_pt)
     player.showStat()
